@@ -24,6 +24,8 @@ class SummarizeQC:
         self.dfsummary.to_csv('summary.csv', index=False)
         
         # write out to hdf5
+        # To read hdf5
+        # d = pd.read_hdf('summary.h5','summary')
         self.dfsummary.to_hdf('summary.h5', key='summary',mode='w')
         
     def process_files(self, allfiles):
