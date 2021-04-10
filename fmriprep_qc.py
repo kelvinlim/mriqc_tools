@@ -97,44 +97,7 @@ class SummarizeQC:
             else: 
                 # res has multiple keys
                 dict[data_item[0]].append(res[data_item[1]][data_item[2]])
-           
-    def process_files2(self, allfiles):
-        # process all the files
-        
-        # lists to hold columns of data
-        sub = []
-        ses = []
-        task = []
-        run = []
-        std_dvars_per = []
-        fd_per = []
-        
-        
-        for file in allfiles:
-            res = self.process_file(file['fullpath'])
-            
-            # load data into the lists
-            sub.append(res['sub'])
-            ses.append(res['ses'])
-            task.append(res['task'])
-            run.append(res['run'])
-            std_dvars_per.append(res['std_dvars']['percent'])
-            fd_per.append(res['framewise_displacement']['percent'])
-
-        # create a dict
-        dict = {'sub': sub,
-                'ses': ses,
-                'task': task,
-                'run': run,
-                'std_dvars_per': std_dvars_per,
-                'fd_per': fd_per
-                }
-        
-        # create the dataframe
-        df = pd.DataFrame(dict)
-    
-        return df
-
+          
         
     def process_file(self, fullpath):
         # parse filename
