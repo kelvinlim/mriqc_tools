@@ -18,7 +18,7 @@ class SummarizeQC:
         # get list of all tsv files
         self.allfiles = self.find_confoundstsv(fpath)
         
-        self.dfsummary = self.process_files(self.allfiles)
+        self.dfsummary = self.process_files(self.allfiles[:])
         
         # write out to csv
         self.dfsummary.to_csv('summary.csv', index=False)
@@ -27,8 +27,78 @@ class SummarizeQC:
         # To read hdf5
         # d = pd.read_hdf('summary.h5','summary')
         self.dfsummary.to_hdf('summary.h5', key='summary',mode='w')
+ 
         
+ 
     def process_files(self, allfiles):
+        # process all the files
+        
+        # list of columns to generate
+        # this supports metageneration of the output to simplify code
+        col_list =[
+            ['sub'],
+            ['ses'],
+            ['task'],
+            ['run'],
+            ['fd-per', 'framewise_displacement', 'percent'],
+            ['fd-mean', 'framewise_displacement', 'mean'],
+            ['fd-std', 'framewise_displacement', 'std'],
+            ['fd-max', 'framewise_displacement', 'max'],
+            ['fd-min', 'framewise_displacement', 'min'],
+            ['std_dvars-per', 'std_dvars', 'percent'],
+            ['std_dvars-mean', 'std_dvars', 'mean'],
+            ['std_dvars-std', 'std_dvars', 'std'],
+            ['std_dvars-max', 'std_dvars', 'max'],
+            ['std_dvars-min', 'std_dvars', 'min'],
+            ]
+        
+        # create the dictionary of lists that hold the columns
+        dict = {}
+        for item in col_list:
+            dict[item[0]] = []
+            
+        
+        for file in allfiles:
+            res = self.process_file(file['fullpath'])
+            
+            # load data into the dictonary of lists
+            self.retrieve_load_value(col_list, dict, res)
+
+        
+        # create the dataframe
+        df = pd.DataFrame(dict)
+    
+        return df
+    
+    def retrieve_load_value(self,col_list, dict, res):
+        """
+        retrieves and loads results into output dictionary
+
+        Parameters
+        ----------
+        col_list : TYPE
+            DESCRIPTION.
+        dict : TYPE
+            DESCRIPTION.
+        res : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+    
+        for data_item in col_list:
+            # check how many items in list
+            if len(data_item) == 1:
+                # res has single key
+                dict[data_item[0]].append(res[data_item[0]])
+            else: 
+                # res has multiple keys
+                dict[data_item[0]].append(res[data_item[1]][data_item[2]])
+           
+    def process_files2(self, allfiles):
         # process all the files
         
         # lists to hold columns of data
@@ -105,7 +175,7 @@ class SummarizeQC:
             
             # get the number of items that exceed the threshold
             num = self.df[self.df[key] > items[key] ].shape[0]
-            res2["percent"] = num/size
+            res2["percent"] = 100.0 * num/size
             
             #print(key, num)
             res[key] = res2
