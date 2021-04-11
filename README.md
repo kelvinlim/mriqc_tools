@@ -19,6 +19,10 @@ sudo docker images | grep eyegazeqc
 # this makes it available at http://localhost:5003/posts 
 sudo docker run -p 5003:5003 eyegazeqc
 
+
+# to run the container and then detach to run in background
+sudo docker run -d -p 5003:5003 eyegazeqc
+
 # there is a file x0-29.conf which is an apache config file
 # which sets up reverseproxy
 ```
