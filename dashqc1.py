@@ -21,8 +21,20 @@ df = pd.read_csv('summary.csv')
 
 available_tasks = df['task'].unique()
 
+markdown_text = '''
+### Dashboard for eyegaze fmri data quality control
+
+This app was created using Dash for python from [plotly.com](https://dash.plotly.com/)
+
+The qc data was generate using [fmriprep](https://fmriprep.org/en/stable/outputs.html#confounds)
+
+The code is located [here](https://github.com/kelvinlim/mriqc_tools)
+
+'''
+
 app.layout = html.Div([
     
+    dcc.Markdown(children=markdown_text),
     
     dcc.Dropdown(
         id='task',
