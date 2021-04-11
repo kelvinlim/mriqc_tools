@@ -10,7 +10,12 @@ import pandas as pd
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# need the requests_pathname_prefix when when running with apache so 
+# can find the dash js files
+# TODO - how to be able to configure this based on whether running this for
+# apache and docker?
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
+	requests_pathname_prefix='/eyegazeqc/')
 
 df = pd.read_csv('summary.csv')
 
