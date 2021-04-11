@@ -26,16 +26,18 @@ markdown_text = '''
 
 This app was created using Dash for python from [plotly.com](https://dash.plotly.com/)
 
-The qc data was generate using [fmriprep](https://fmriprep.org/en/stable/outputs.html#confounds)
+The qc data were generated using [fmriprep](https://fmriprep.org/en/stable/outputs.html#confounds)
 
-The code is located [here](https://github.com/kelvinlim/mriqc_tools)
+The code is located [here](https://github.com/kelvinlim/mriqc_tools).  The program fmriprep_qc.py
+reads in all available *desc-confounds_regressors.tsv files and summarizes them into a summary.csv file.
+The summary.csv file is then read by the Dash app.
 
 '''
 
 app.layout = html.Div([
     
     dcc.Markdown(children=markdown_text),
-    
+
     dcc.Dropdown(
         id='task',
         options=[{'label': i, 'value': i} for i in available_tasks],
