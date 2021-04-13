@@ -23,14 +23,14 @@ df = pd.read_csv('summary.csv')
 available_tasks = df['task'].unique()
 
 markdown_text = '''
-### Dashboard for eyegaze fmri data quality control
+### Dashboard for fmri data quality control
 
 This app was created using Dash for python from [plotly.com](https://dash.plotly.com/)
 
 The qc data were generated using [fmriprep](https://fmriprep.org/en/stable/outputs.html#confounds)
 
 The code is located [here](https://github.com/kelvinlim/mriqc_tools).  The program fmriprep_qc.py
-reads in all available *desc-confounds_regressors.tsv files and summarizes them into a summary.csv file.
+reads in all available *desc-confounds_*.tsv files and summarizes them into a summary.csv file.
 The summary.csv file is then read by the Dash app.
 
 '''
@@ -42,7 +42,7 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='task',
         options=[{'label': i, 'value': i} for i in available_tasks],
-        value='eyegazeall'
+        value='rest'
     ),
     
     dcc.Graph(id='fd-graphic'),
