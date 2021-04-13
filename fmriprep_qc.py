@@ -10,6 +10,7 @@ sample file: desc-confounds_regressors.tsv
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import fnmatch
 
 class SummarizeQC:
     def __init__(self,fpath):
@@ -151,7 +152,8 @@ class SummarizeQC:
         extract out the sub, ses task and run
 
         "sub-902_ses-1602_task-eyegazeall_run-1_desc-confounds_regressors.tsv"
-        
+       
+        "sub-1954711_ses-01_task-rest_acq-AP_run-1_desc-confounds_timeseries.tsv"
         Parameters
         ----------
         filename : TYPE
