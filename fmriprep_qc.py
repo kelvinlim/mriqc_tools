@@ -1,4 +1,4 @@
-#!/bin/env python3
+#! env python
 
 '''
 code to extract out relevant qc data from fmriprep output.
@@ -8,9 +8,10 @@ sample file: desc-confounds_regressors.tsv
 
 '''
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import os
 import fnmatch
+import sys
 
 class SummarizeQC:
     def __init__(self,fpath):
@@ -40,12 +41,18 @@ class SummarizeQC:
             ['sub'],
             ['ses'],
             ['task'],
+            ['acq'],
             ['run'],
             ['fd-per', 'framewise_displacement', 'percent'],
             ['fd-mean', 'framewise_displacement', 'mean'],
             ['fd-std', 'framewise_displacement', 'std'],
             ['fd-max', 'framewise_displacement', 'max'],
             ['fd-min', 'framewise_displacement', 'min'],
+            ['dvars-per', 'dvars', 'percent'],
+            ['dvars-mean', 'dvars', 'mean'],
+            ['dvars-std', 'dvars', 'std'],
+            ['dvars-max', 'dvars', 'max'],
+            ['dvars-min', 'dvars', 'min'],
             ['std_dvars-per', 'std_dvars', 'percent'],
             ['std_dvars-mean', 'std_dvars', 'mean'],
             ['std_dvars-std', 'std_dvars', 'std'],
@@ -107,12 +114,15 @@ class SummarizeQC:
         # read the tsv
         self.readtsv(fullpath)
         
-        items = {"std_dvars": 1.5, "framewise_displacement": 0.5 }
+        items = {"framewise_displacement": 0.5,
+                 "dvars": 1.5, 
+                 "std_dvars": 1.5, 
+                 }
         
         # calculate the desired stats for selected items
         res = self.calcstats(items) 
         fileinfo.update(res)
-        #print(fileinfo)
+        print(fileinfo['sub'])
         #print(res)
         return fileinfo
     
@@ -170,27 +180,41 @@ class SummarizeQC:
         # first parse based on _
         p1 = os.path.basename(filepath).split("_")
         
-        # check if we have ses
-        if len(p1) == 5:
-            ses = ''
-            sub = p1[0].split('sub-')[1]
-            task = p1[1].split('task-')[1]
-            run = p1[2].split('run-')[1]
-        else: 
-            sub = p1[0].split('sub-')[1]
-            ses = p1[1].split('ses-')[1]
-            task = p1[2].split('task-')[1]
-            run = p1[3].split('run-')[1]
-
+        # initialize vars
+        sub = ""
+        ses = ""
+        task = ""
+        acq = ""
+        run = ""
+        
+        for p in p1:
+            # check for each parameter
+            
+            if p.startswith('sub-'):
+                sub = p.split('sub-')[1]
+ 
+            if p.startswith('ses-'):
+                ses = p.split('ses-')[1]
+                
+            if p.startswith('task-'):
+                task = p.split('task-')[1]
+  
+            if p.startswith('acq-'):
+                acq = p.split('acq-')[1]
+                
+            if p.startswith('run-'):
+                run = p.split('run-')[1]
+        
         fileinfo["sub"] = sub
         fileinfo["ses"] = ses
         fileinfo["task"] = task
+        fileinfo["acq"] = acq
         fileinfo["run"] = run
        
         return fileinfo
         
 
-    def find_confoundstsv(self, dir, stub="desc-confounds_regressors.tsv"):
+    def find_confoundstsv(self, dir, stub="*desc-confounds_*.tsv"):
         '''
         Find the confounds tsv files starting at the provided
         directory. 
@@ -209,7 +233,7 @@ class SummarizeQC:
 
                 # change the extension from '.mp3' to 
                 # the one of your choice.
-                if file.endswith(stub):
+                if fnmatch.fnmatch(file, stub):
                     #print (root+'/'+str(file))
                     #print(root + " : " +  str(file))
                     tsvinfo['root'] = root
@@ -243,7 +267,12 @@ class SummarizeQC:
 if __name__ == '__main__':
 
     fmriprepdir = '/home/share/eyegaze_BIDS/Derivs/fmriprep'
-    qc = SummarizeQC(fmriprepdir)
+    
+    # expect two arguments
+    if len(sys.argv) == 2:
+        qc = SummarizeQC(sys.argv[1])
+    else:
+        print("Usage: ", sys.argv[0], " fmriprep_output_directory")
 
 
     

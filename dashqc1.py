@@ -15,7 +15,8 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # TODO - how to be able to configure this based on whether running this for
 # apache and docker?
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
-	requests_pathname_prefix='/eyegazeqc/')
+#   requests_pathname_prefix='/eyegazeqc/')  # for docker
+	requests_pathname_prefix='/')  # for testing
 
 df = pd.read_csv('summary.csv')
 
@@ -46,6 +47,8 @@ app.layout = html.Div([
     
     dcc.Graph(id='fd-graphic'),
     dcc.Graph(id='fd_mean-graphic'),
+    dcc.Graph(id='dvars-graphic'),
+    dcc.Graph(id='dvars_mean-graphic'),
     dcc.Graph(id='std_dvars-graphic'),
     dcc.Graph(id='std_dvars_mean-graphic'),
 
@@ -54,6 +57,8 @@ app.layout = html.Div([
 @app.callback(
     Output('fd-graphic', 'figure'),
     Output('fd_mean-graphic', 'figure'),
+    Output('dvars-graphic', 'figure'),
+    Output('dvars_mean-graphic', 'figure'),
     Output('std_dvars-graphic', 'figure'),
     Output('std_dvars_mean-graphic', 'figure'),
     Input('task', 'value'))
@@ -64,8 +69,11 @@ def update_graph(task_value):
     fig_fd = px.strip(dff, x = dff['ses'], y = dff['fd-per'])
     fig_fd_mean = px.strip(dff, x = dff['ses'], y = dff['fd-mean'])
 
-    fig_std_dvar = px.strip(dff, x = dff['ses'], y = dff['std_dvars-per'])
-    fig_std_dvar_mean = px.strip(dff, x = dff['ses'], y = dff['std_dvars-mean'])
+    fig_dvars = px.strip(dff, x = dff['ses'], y = dff['dvars-per'])
+    fig_dvars_mean = px.strip(dff, x = dff['ses'], y = dff['dvars-mean'])
+
+    fig_std_dvars = px.strip(dff, x = dff['ses'], y = dff['std_dvars-per'])
+    fig_std_dvars_mean = px.strip(dff, x = dff['ses'], y = dff['std_dvars-mean'])
 
 
     #fig = px.scatter(x=dff[dff['Indicator Name'] == xaxis_column_name]['Value'],
@@ -76,7 +84,7 @@ def update_graph(task_value):
 
 
 
-    return fig_fd, fig_fd_mean, fig_std_dvar, fig_std_dvar_mean
+    return fig_fd, fig_fd_mean,fig_dvars, fig_dvars_mean, fig_std_dvars, fig_std_dvars_mean
 
 
 if __name__ == '__main__':
