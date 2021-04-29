@@ -42,6 +42,7 @@ class ExtractRegressors:
             'trans_x', 'trans_y', 'trans_z',
             'rot_x', 'rot_y', 'rot_z']
 
+        # create new dataframe with the desired columns
         newdf = self.df[col_list]
 
         # create the fullpath outputfile
@@ -49,7 +50,7 @@ class ExtractRegressors:
             'sub-'+fileinfo['sub'] + '_ses-'+fileinfo['ses'] +'_task-' + fileinfo['task'] +
             '_run-' + fileinfo['run'] + '_regressors.1D')
 
-        # write out tsv omitting the header and index column
+        # write out tsv omitting the header and index column with tab separator
         newdf.to_csv(fullpathout, sep = '\t', header=False, index=False)
         print(fullpathout)
 
